@@ -186,6 +186,174 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Advanced Analysis Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Advanced Analysis</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="nav nav-tabs" id="analysisTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="correlation-tab" data-bs-toggle="tab" href="#correlation" role="tab">
+                                        Correlation Analysis
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="distribution-tab" data-bs-toggle="tab" href="#distribution" role="tab">
+                                        Distribution Analysis
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="regional-tab" data-bs-toggle="tab" href="#regional" role="tab">
+                                        Regional Analysis
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="outliers-tab" data-bs-toggle="tab" href="#outliers" role="tab">
+                                        Outlier Detection
+                                    </a>
+                                </li>
+                            </ul>
+                            
+                            <div class="tab-content mt-3" id="analysisTabContent">
+                                <!-- Correlation Analysis -->
+                                <div class="tab-pane fade show active" id="correlation" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <canvas id="correlation-chart" height="300"></canvas>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="correlation-stats">
+                                                <h4>Correlation Statistics</h4>
+                                                <div id="correlation-values"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Distribution Analysis -->
+                                <div class="tab-pane fade" id="distribution" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <canvas id="boxplot-chart" height="300"></canvas>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="distribution-stats">
+                                                <h4>Distribution Statistics</h4>
+                                                <div id="distribution-values"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Regional Analysis -->
+                                <div class="tab-pane fade" id="regional" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <canvas id="heatmap-chart" height="300"></canvas>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="regional-stats">
+                                                <h4>Regional Statistics</h4>
+                                                <div id="regional-values"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Outlier Detection -->
+                                <div class="tab-pane fade" id="outliers" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="outlier-summary">
+                                                <h4>Outlier Detection Summary</h4>
+                                                <div id="outlier-values"></div>
+                                            </div>
+                                            <div class="table-responsive mt-3">
+                                                <table class="table table-hover" id="outliers-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Country</th>
+                                                            <th>Metric</th>
+                                                            <th>Value</th>
+                                                            <th>Z-Score</th>
+                                                            <th>Status</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Quality Report -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Data Quality Report</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="quality-metrics">
+                                        <h4>Quality Metrics</h4>
+                                        <div id="quality-metrics"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="recommendations">
+                                        <h4>Recommendations</h4>
+                                        <div id="quality-recommendations"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Features -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Advanced Features</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="feature-card">
+                                        <h4>Rolling Averages</h4>
+                                        <div id="rolling-averages"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="feature-card">
+                                        <h4>Growth Metrics</h4>
+                                        <div id="growth-metrics"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="feature-card">
+                                        <h4>Per Capita Analysis</h4>
+                                        <div id="per-capita-metrics"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Loading Spinner -->

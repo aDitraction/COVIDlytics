@@ -92,8 +92,6 @@ const handleFile = (file) => {
     });
 };
 
-// Setup event listeners
-
 // Handle successful CSV parse
 const handleParseComplete = (results) => {
     console.log('Parse results:', results);
@@ -108,7 +106,7 @@ const handleParseComplete = (results) => {
     try {
         // Map the CSV columns to our expected format
         globalData = results.data
-            .filter(row => row['Country/Region']) // Filter out rows without country
+            .filter(row => row['Country/Region'] && row['Confirmed']) // Filter out rows without country and confirmed cases
             .map(row => ({
                 date: new Date().toISOString().split('T')[0], // Current date since it's not in CSV
                 country: row['Country/Region'],
@@ -120,9 +118,10 @@ const handleParseComplete = (results) => {
                 newCases: Number(row['New cases']) || 0,
                 newDeaths: Number(row['New deaths']) || 0,
                 newRecovered: Number(row['New recovered']) || 0,
-                deathRate: Number(row['Deaths / 100 Cases']) || 0,
-                recoveryRate: Number(row['Recovered / 100 Cases']) || 0,
-                deathRecoveryRate: Number(row['Deaths / 100 Recovered']) || 0,
+                deathRate: (Number(row['Deaths']) / Number(row['Confirmed'])) * 100 || 0,
+                recoveryRate: (Number(row['Recovered']) / Number(row['Confirmed'])) * 100 || 0,
+                deathRecoveryRate: Number(row['Deaths']) && Number(row['Recovered']) ? 
+                    (Number(row['Deaths']) / Number(row['Recovered'])) * 100 : 0,
                 lastWeekCases: Number(row['Confirmed last week']) || 0,
                 weekChange: Number(row['1 week change']) || 0,
                 weekPercentIncrease: Number(row['1 week % increase']) || 0,
@@ -139,18 +138,19 @@ const handleParseComplete = (results) => {
         populateCountrySelect();
         populateRegionSelect();
         
+        // Get initial filtered data
+        const filteredData = getFilteredData();
+        console.log('Initial filtered data:', filteredData);
+        
         // Update UI
-        updateDashboard();
+        updateDashboard(filteredData);
         
         // Show dashboard
         uploadSection.classList.add('d-none');
         dashboardContent.classList.remove('d-none');
         
-        // Initialize charts
-        const filteredData = getFilteredData();
-        updateCharts(filteredData, selectedMetric);
-        
     } catch (error) {
+        console.error('Error processing data:', error);
         hideLoading();
         alert('Error processing data: ' + error.message);
         return;
@@ -264,6 +264,10 @@ const handleMetricChange = (e) => {
 const updateDashboard = (data) => {
     console.log('Updating dashboard with data:', data);
     
+    if (!data) {
+        data = getFilteredData(); // Get filtered data if no data is provided
+    }
+    
     if (!data) return;
     
     // Update stat cards with safe formatting
@@ -293,6 +297,11 @@ const updateDashboard = (data) => {
 
 // Get filtered data based on current selections
 const getFilteredData = () => {
+    if (!globalData || globalData.length === 0) {
+        console.warn('No global data available');
+        return null;
+    }
+
     let data = [...globalData];
     
     // Filter by WHO region if selected
@@ -311,23 +320,45 @@ const getFilteredData = () => {
     }
     
     // Calculate and return global totals
-    return {
+    const totals = {
         date: new Date().toISOString().split('T')[0],
-        cases: data.reduce((sum, row) => sum + (Number(row.cases) || 0), 0),
-        deaths: data.reduce((sum, row) => sum + (Number(row.deaths) || 0), 0),
-        recovered: data.reduce((sum, row) => sum + (Number(row.recovered) || 0), 0),
-        active: data.reduce((sum, row) => sum + (Number(row.active) || 0), 0),
-        newCases: data.reduce((sum, row) => sum + (Number(row.newCases) || 0), 0),
-        newDeaths: data.reduce((sum, row) => sum + (Number(row.newDeaths) || 0), 0),
-        newRecovered: data.reduce((sum, row) => sum + (Number(row.newRecovered) || 0), 0),
-        deathRate: (data.reduce((sum, row) => sum + (Number(row.deaths) || 0), 0) / 
-                   data.reduce((sum, row) => sum + (Number(row.cases) || 0), 0)) * 100 || 0,
-        recoveryRate: (data.reduce((sum, row) => sum + (Number(row.recovered) || 0), 0) / 
-                      data.reduce((sum, row) => sum + (Number(row.cases) || 0), 0)) * 100 || 0,
-        weekChange: data.reduce((sum, row) => sum + (Number(row.weekChange) || 0), 0),
-        weekPercentIncrease: data.reduce((sum, row) => sum + (Number(row.weekPercentIncrease) || 0), 0) / 
-                            (data.length || 1)
+        cases: 0,
+        deaths: 0,
+        recovered: 0,
+        active: 0,
+        newCases: 0,
+        newDeaths: 0,
+        newRecovered: 0,
+        deathRate: 0,
+        recoveryRate: 0,
+        weekChange: 0,
+        weekPercentIncrease: 0
     };
+
+    // Sum up all numeric values
+    data.forEach(row => {
+        totals.cases += Number(row.cases) || 0;
+        totals.deaths += Number(row.deaths) || 0;
+        totals.recovered += Number(row.recovered) || 0;
+        totals.active += Number(row.active) || 0;
+        totals.newCases += Number(row.newCases) || 0;
+        totals.newDeaths += Number(row.newDeaths) || 0;
+        totals.newRecovered += Number(row.newRecovered) || 0;
+        totals.weekChange += Number(row.weekChange) || 0;
+    });
+
+    // Calculate rates
+    if (totals.cases > 0) {
+        totals.deathRate = (totals.deaths / totals.cases) * 100;
+        totals.recoveryRate = (totals.recovered / totals.cases) * 100;
+    }
+
+    // Calculate week percent increase
+    totals.weekPercentIncrease = totals.weekChange > 0 ? 
+        (totals.weekChange / (totals.cases - totals.weekChange)) * 100 : 0;
+
+    console.log('Calculated totals:', totals);
+    return totals;
 };
 
 // Get latest statistics for selected data

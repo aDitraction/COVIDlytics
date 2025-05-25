@@ -151,4 +151,146 @@ def find_similar_countries(data, target_country, n_neighbors=5):
     return {
         'similar_countries': [country for country, _ in similar_countries],
         'similarity_scores': [1 - (dist / max(d for _, d in distances)) for _, dist in similar_countries]
-    } 
+    }
+
+def detect_outliers_zscore(data, columns, threshold=3):
+    """
+    Detect outliers using Z-score method for multiple columns
+    Returns DataFrame with outlier flags and summary
+    """
+    outliers = {}
+    for column in columns:
+        if column not in data.columns:
+            continue
+            
+        # Calculate z-scores
+        z_scores = np.abs(stats.zscore(data[column].fillna(data[column].mean())))
+        outliers[column] = z_scores > threshold
+        
+    # Create outlier summary
+    outlier_summary = {
+        'total_outliers': sum(outliers[col].sum() for col in outliers),
+        'outliers_by_column': {col: outliers[col].sum() for col in outliers},
+        'percentage_by_column': {col: (outliers[col].sum() / len(data) * 100) for col in outliers}
+    }
+    
+    return outliers, outlier_summary
+
+def validate_data_quality(data):
+    """
+    Comprehensive data quality validation
+    Returns validation report with issues and recommendations
+    """
+    quality_report = {
+        'missing_values': {},
+        'data_types': {},
+        'value_ranges': {},
+        'consistency_checks': [],
+        'recommendations': []
+    }
+    
+    # Check missing values
+    missing = data.isnull().sum()
+    quality_report['missing_values'] = missing[missing > 0].to_dict()
+    
+    # Check data types
+    quality_report['data_types'] = data.dtypes.to_dict()
+    
+    # Check value ranges for numeric columns
+    numeric_columns = data.select_dtypes(include=[np.number]).columns
+    for col in numeric_columns:
+        quality_report['value_ranges'][col] = {
+            'min': data[col].min(),
+            'max': data[col].max(),
+            'mean': data[col].mean(),
+            'median': data[col].median()
+        }
+    
+    # Consistency checks
+    if 'Confirmed' in data.columns and 'Active' in data.columns:
+        invalid_active = data[data['Active'] > data['Confirmed']].shape[0]
+        if invalid_active > 0:
+            quality_report['consistency_checks'].append(
+                f'Found {invalid_active} rows where Active cases exceed Confirmed cases'
+            )
+    
+    # Generate recommendations
+    for col, missing_count in quality_report['missing_values'].items():
+        if missing_count / len(data) > 0.1:
+            quality_report['recommendations'].append(
+                f'High missing values ({missing_count}) in {col}. Consider imputation or removal.'
+            )
+    
+    return quality_report
+
+def advanced_feature_engineering(data):
+    """
+    Advanced feature engineering for COVID-19 data analysis
+    """
+    engineered_data = data.copy()
+    
+    # Calculate rolling averages
+    if 'New cases' in data.columns:
+        engineered_data['7_day_avg_cases'] = data['New cases'].rolling(window=7).mean()
+        engineered_data['14_day_avg_cases'] = data['New cases'].rolling(window=14).mean()
+    
+    # Calculate acceleration/deceleration
+    if 'New cases' in data.columns:
+        engineered_data['case_acceleration'] = data['New cases'].diff()
+    
+    # Calculate per capita metrics (assuming population data exists)
+    if 'Population' in data.columns:
+        for metric in ['Confirmed', 'Deaths', 'Active']:
+            if metric in data.columns:
+                engineered_data[f'{metric}_per_100k'] = (
+                    data[metric] / data['Population'] * 100000
+                )
+    
+    # Calculate complex ratios
+    if all(col in data.columns for col in ['Confirmed', 'Tests']):
+        engineered_data['positivity_rate'] = (
+            data['Confirmed'] / data['Tests'] * 100
+        )
+    
+    # Calculate growth factors
+    if 'New cases' in data.columns:
+        engineered_data['growth_factor'] = (
+            data['New cases'] / data['New cases'].shift(1)
+        )
+    
+    return engineered_data
+
+def generate_statistical_insights(data):
+    """
+    Generate comprehensive statistical insights from the data
+    """
+    insights = {
+        'summary_stats': {},
+        'correlations': {},
+        'trend_analysis': {},
+        'distribution_analysis': {}
+    }
+    
+    # Basic summary statistics
+    numeric_columns = data.select_dtypes(include=[np.number]).columns
+    insights['summary_stats'] = data[numeric_columns].describe().to_dict()
+    
+    # Correlation analysis
+    insights['correlations'] = data[numeric_columns].corr().to_dict()
+    
+    # Trend analysis
+    for col in ['Confirmed', 'Deaths', 'Recovered', 'Active']:
+        if col in data.columns:
+            trends = perform_trend_analysis(data, col)
+            insights['trend_analysis'][col] = trends
+    
+    # Distribution analysis
+    for col in numeric_columns:
+        distribution = {
+            'skewness': float(stats.skew(data[col].dropna())),
+            'kurtosis': float(stats.kurtosis(data[col].dropna())),
+            'normality_test': stats.normaltest(data[col].dropna())[1]
+        }
+        insights['distribution_analysis'][col] = distribution
+    
+    return insights 
