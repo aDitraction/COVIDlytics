@@ -1,12 +1,14 @@
 /* Variables */
 :root {
     --primary-color: #4361ee;
-    --secondary-color: #3f37c9;
-    --success-color: #4cc9f0;
-    --warning-color: #f72585;
-    --info-color: #4895ef;
+    --secondary-color: #6c757d;
+    --success-color: #2ecc71;
+    --warning-color: #f1c40f;
+    --danger-color: #e74c3c;
     --light-bg: #f8f9fa;
     --dark-bg: #212529;
+    --border-radius: 8px;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     --transition-speed: 0.3s;
 }
@@ -23,16 +25,24 @@
 /* Global Styles */
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+    padding-top: 60px;
+}
+
+body.light-mode {
     background-color: var(--light-bg);
     color: var(--dark-bg);
-    transition: background-color var(--transition-speed);
-    padding-top: 60px;
+}
+
+body.dark-mode {
+    background-color: var(--dark-bg);
+    color: #fff;
 }
 
 /* Navigation */
 .navbar {
-    background-color: #ffffff;
-    box-shadow: var(--card-shadow);
+    background-color: #fff;
+    box-shadow: var(--box-shadow);
     padding: 1rem;
 }
 
@@ -42,7 +52,7 @@ body {
 }
 
 .dark-mode .navbar {
-    background-color: var(--card-bg);
+    background-color: #2d3436;
 }
 
 /* Theme Toggle */
@@ -86,185 +96,206 @@ body {
     margin-bottom: 1rem;
 }
 
-/* Stat Cards */
+/* Cards and Containers */
+.card {
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 1.5rem;
+    border: none;
+    background-color: #fff;
+}
+
+.dark-mode .card {
+    background-color: #2d3436;
+    color: #fff;
+}
+
+/* Stats Cards */
 .stat-card {
-    background: var(--card-bg);
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    height: 100%;
-    transition: transform 0.2s;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-}
-
-.stat-content {
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    background-color: #fff;
+    box-shadow: var(--box-shadow);
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dark-mode .stat-card {
+    background-color: #2d3436;
 }
 
 .stat-icon {
     font-size: 2rem;
-    margin-bottom: 15px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(67, 97, 238, 0.1);
     color: var(--primary-color);
 }
 
-.stat-card h3 {
-    font-size: 1rem;
-    color: var(--text-muted);
-    margin: 0;
+.stat-content {
+    flex: 1;
 }
 
-.stat-card h2 {
-    font-size: 2rem;
-    font-weight: 600;
+.stat-content h3 {
     margin: 0;
-    color: var(--text-primary);
+    font-size: 0.875rem;
+    color: var(--secondary-color);
+}
+
+.stat-content h2 {
+    margin: 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
 .trend-info {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.9rem;
-    color: var(--text-muted);
+    font-size: 0.75rem;
+    color: var(--secondary-color);
 }
 
-.trend-value {
-    font-weight: 500;
+/* Advanced Analysis Styles */
+.analysis-tab-content {
+    padding: 1.5rem;
 }
 
-.text-success {
-    color: var(--success-color) !important;
-}
-
-.text-danger {
-    color: var(--danger-color) !important;
-}
-
-.text-warning {
-    color: var(--warning-color) !important;
-}
-
-/* Filter Cards */
-.filter-card {
-    background: var(--card-bg);
-    border-radius: 10px;
-    padding: 15px;
-    height: 100%;
-}
-
-.filter-card label {
-    color: var(--text-muted);
-    margin-bottom: 8px;
-}
-
-/* Chart Cards */
 .chart-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: var(--card-shadow);
-    margin-bottom: 20px;
-    height: 100%;
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.dark-mode .chart-card {
+    background-color: #2d3436;
 }
 
 .chart-header {
-    margin-bottom: 20px;
+    margin-bottom: 1rem;
 }
 
 .chart-header h3 {
     margin: 0;
-    font-size: 1.2rem;
-    color: var(--text-color);
-}
-
-.chart-body {
-    position: relative;
-    height: 400px;
-    width: 100%;
+    font-size: 1.25rem;
+    font-weight: 500;
 }
 
 .distribution-chart-container {
     height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-/* Make sure canvas takes full height of container */
-canvas {
-    max-width: 100%;
-    height: 100% !important;
+/* Stats Items */
+.stats-item {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Table Card */
+.dark-mode .stats-item {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.stats-item:last-child {
+    border-bottom: none;
+}
+
+.stats-item strong {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.stats-item ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.stats-item li {
+    margin-bottom: 0.25rem;
+}
+
+/* Table Styles */
 .table-card {
-    background: var(--card-bg);
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+}
+
+.dark-mode .table-card {
+    background-color: #2d3436;
 }
 
 .table-header {
-    margin-bottom: 15px;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .table-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
 .table-header h3 {
-    font-size: 1.2rem;
     margin: 0;
-    color: var(--text-primary);
-}
-
-.table {
-    margin-bottom: 0;
-}
-
-.table th {
-    border-top: none;
-    color: var(--text-muted);
+    font-size: 1.25rem;
     font-weight: 500;
 }
 
-.table td {
-    vertical-align: middle;
-    color: var(--text-primary);
+/* Map Styles */
+.leaflet-container {
+    border-radius: var(--border-radius);
+    z-index: 1;
+}
+
+.dark-mode .leaflet-container {
+    filter: invert(90%) hue-rotate(180deg);
+}
+
+.dark-mode .leaflet-tile {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
 
 /* Loading Spinner */
 .spinner {
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(67, 97, 238, 0.3);
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(67, 97, 238, 0.1);
+    border-left-color: var(--primary-color);
     border-radius: 50%;
-    border-top-color: var(--primary-color);
-    animation: spin 1s ease-in-out infinite;
-    margin: 0 auto;
+    animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Footer */
 .footer {
-    background-color: #ffffff;
-    padding: 3rem 0;
+    background-color: #fff;
+    padding: 2rem 0;
     margin-top: 3rem;
-    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .footer {
+    background-color: #2d3436;
 }
 
 .footer h5 {
-    font-weight: 600;
-    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
 }
 
 .footer ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 .footer ul li {
@@ -272,9 +303,9 @@ canvas {
 }
 
 .footer a {
-    color: var(--dark-bg);
+    color: var(--secondary-color);
     text-decoration: none;
-    transition: color var(--transition-speed);
+    transition: color 0.3s;
 }
 
 .footer a:hover {
@@ -290,49 +321,19 @@ canvas {
     font-size: 1.5rem;
 }
 
-/* Dark Mode Styles */
-.dark-mode {
-    background-color: var(--dark-bg);
-    color: var(--text-color);
-}
-
-.dark-mode .stat-card,
-.dark-mode .filter-card,
-.dark-mode .chart-card,
-.dark-mode .table-card,
-.dark-mode .footer {
-    background-color: var(--card-bg);
-    color: var(--text-color);
-}
-
-.dark-mode .table {
-    color: var(--text-color);
-}
-
-.dark-mode .footer a {
-    color: var(--text-color);
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
-    .stats-cards > div {
-        margin-bottom: 1rem;
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
     }
-    
-    .filter-card {
-        margin-bottom: 1rem;
-    }
-    
-    .chart-card {
-        margin-bottom: 1rem;
-    }
-    
-    .chart-body {
+
+    .distribution-chart-container {
         height: 300px;
     }
-    
-    .distribution-chart-container {
-        height: 250px;
+
+    .table-responsive {
+        margin: 0 -1rem;
     }
 }
 
